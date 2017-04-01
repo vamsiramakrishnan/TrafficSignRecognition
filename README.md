@@ -31,3 +31,10 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Use batch iteration to process data.
 * Augment data based on a fixed sample size per class . Which means classes with lesser samples will be upscaled to arrive at the target sample number. 
 * Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** . 
+
+# Model Architecture 
+* VGG Net Blocks that perform convolutions 
+* Each VGGNet block has two 2D Convolutions and a subsampling layer ( Max Pooling )
+* We use 4 layers of VGG Net to increase depth from 32 to 128 
+* We use Multi-scale convolutions and concatenate them with the VGG blocks using subsampling before we connect them to the fully connected layer
+
