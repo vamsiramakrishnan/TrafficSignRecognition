@@ -33,6 +33,8 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** . 
 
 # Model Architecture 
+**VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
+
 * VGG Net Blocks that perform convolutions 
 * Each VGGNet block has two 2D Convolutions and a subsampling layer ( Max Pooling )
 * We use 4 layers of VGG Net to increase depth from 32 to 128 
