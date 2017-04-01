@@ -26,3 +26,8 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
   2. Locally centering the image around the mean
   3. Normalizing using Standard Deviation
   4. Use Histogram Equalization
+
+# Augment Data
+* Use batch iteration to process data.
+* Augment data based on a fixed sample size per class . Which means classes with lesser samples will be upscaled to arrive at the target sample number. 
+* Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** . 
