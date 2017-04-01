@@ -9,3 +9,20 @@ A Deep Neural Network to do traffic sign recognition
 * The type of neural network used is a Convolutional Neural Network (CNN) paired with a linear classifier.
 * Python is the language used to program this.
 * The complete source code can be found here
+# Getting Started 
+The pickled dataset containing 32x32x3 color images split across labelled training, test and validation sets
+https://d17h27t6h515a5.cloudfront.net/topher/2017/February/5898cd6f_traffic-signs-data/traffic-signs-data.zip
+
+# Clone the reposiory
+https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
+
+# Download and Visualize
+* Use pandas and matplotlib along with the SignNames.csv to visualize data
+
+# Pre-Process Data
+* Convert the images to grayscale as color isnt used to convey specific information in the dataset.
+* Pre-processing techniques include 
+  1. Centering around mean globally
+  2. Locally centering the image around the mean
+  3. Normalizing using Standard Deviation
+  4. Use Histogram Equalization
