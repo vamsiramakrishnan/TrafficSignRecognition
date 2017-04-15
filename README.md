@@ -33,6 +33,9 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Use pandas and matplotlib along with the SignNames.csv to visualize data
 
 # Pre-Process Data
+<p align="center">
+  <img src="DataPreProcessingSteps.png" width="350"/>
+</p>
 * Pre-processing techniques include 
   1. Centering around mean globally
   2. Locally centering the image around the mean
@@ -46,7 +49,9 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 
 # Model Architecture 
 The model architecture is very similar to most classification deep learning nets. 
-
+<p align="center">
+  <img src="ModelArch.png" width="350"/>
+</p>
 * Spatial Transformers have been deployed to achieve invariance in scale
 * CNN for feature extraction
 * Linear Classifier with softmax activation for the classification task
