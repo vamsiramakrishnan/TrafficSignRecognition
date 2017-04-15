@@ -32,7 +32,7 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** , **brightness A
 
 # Model Architecture 
-**Localization Modules ** -> **Spatial Transformer Module** -> ** CNN ** -> ** Linear Classifier**
+**Localization Modules ** -> **Spatial Transformer Module** -> **CNN** -> ** Linear Classifier**
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
 * VGG Net Blocks that perform convolutions 
