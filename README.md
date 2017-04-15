@@ -3,6 +3,7 @@ A Deep Neural Network to do traffic sign recognition
 * A lot has happened since MobilEye developed the first commercially deployed traffic sign recognition system in collaboration with Continental AG for the BMW-7 series vehicles. Quite a few vehicles have used this technology since. 
 * Establishing a reliable Traffic Sign Classification mechanism is a major step in our journey towards building semi-autonomous/autonomous driving systems.
 * This post intends to explain an approach to solve the problem of traffic sign classification and I intend to show how easy it is, to build, train and deploy a deep learning network for traffic sign classification.
+
 # Highlights of this approach
 * The traffic sign dataset that we will be working on is GTSRB — German Traffic Signs. 
 * The approach used is deep learning.
@@ -16,6 +17,18 @@ https://d17h27t6h515a5.cloudfront.net/topher/2017/February/5898cd6f_traffic-sign
 # Clone the reposiory
 https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 
+# Getting around the repository
+* Initially, all the code resided in the file TrafficSignClassifier.ipynb
+* To clean up the code and make it re-usable, part of the code was exported to a python file called PreProcessing.py which is used by the final version of the file to call functions. 
+* There are deviations in the way the project has been designed and the questions answered. 
+
+# Some highlights 
+* 98.5% accuracy over the test set 
+* Learning rate annealing, Dropout increment, batch size increase as accuracy increases
+* Greedy best save implemented on validation accuracy being the criteria
+* Dataset size varied and finally 
+
+# Steps followed in 
 # Download and Visualize
 * Use pandas and matplotlib along with the SignNames.csv to visualize data
 
@@ -32,6 +45,12 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** , **brightness A
 
 # Model Architecture 
+The model architecture is very similar to most classification deep learning nets. 
+
+* Spatial Transformers have been deployed to achieve invariance in scale
+* CNN for feature extraction
+* Linear Classifier with softmax activation for the classification task
+
 **Localization Modules ** -> **Spatial Transformer Module** -> **CNN** -> ** Linear Classifier**
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
