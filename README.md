@@ -20,7 +20,6 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Use pandas and matplotlib along with the SignNames.csv to visualize data
 
 # Pre-Process Data
-* Convert the images to grayscale as color isnt used to convey specific information in the dataset.
 * Pre-processing techniques include 
   1. Centering around mean globally
   2. Locally centering the image around the mean
@@ -30,9 +29,10 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 # Augment Data
 * Use batch iteration to process data.
 * Augment data based on a fixed sample size per class . Which means classes with lesser samples will be upscaled to arrive at the target sample number. 
-* Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** . 
+* Some methods to augment data would be jittering using **projective transform** , **scaling**, **zooming** , **brightness A
 
 # Model Architecture 
+**Localization Modules ** -> **Spatial Transformer Module** -> ** CNN ** -> ** Linear Classifier**
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
 * VGG Net Blocks that perform convolutions 
