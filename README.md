@@ -28,7 +28,6 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * Greedy best save implemented on validation accuracy being the criteria
 * Dataset size varied and finally 
 
-# Steps followed in 
 # Download and Visualize
 <p align="center">
   <img src="DataVisualization.png" width="350"/>
@@ -66,4 +65,10 @@ The model architecture is very similar to most classification deep learning nets
 * Each VGGNet block has two 2D Convolutions and a subsampling layer ( Max Pooling )
 * We use 4 layers of VGG Net to increase depth from 32 to 128 
 * We use Multi-scale convolutions and concatenate them with the VGG blocks using subsampling before we connect them to the fully connected layer
+
+# Model Training
+* Use of complete augmented dataset where each image is perturbed 10 times using augmentation techniques with an intensity factor and minimum sample target over 30 epochs. 
+* The hyperparameters are fixed using search epochs for a simpler dataset and 2 classes. 
+* The learning rate schedule is implemented as follows -> Learning Rate = Learning Rate/2 when validation accuracy decreases or becomes noisy. 
+* After achieving 95 % validation accuracy we use a balanced dataset to train the model for 20 epochs with higher dropout rate and low learning rate
 
