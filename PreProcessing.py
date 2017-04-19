@@ -14,8 +14,6 @@ from skimage.transform import rotate
 from skimage.transform import warp
 from skimage.transform import ProjectiveTransform
 from skimage.transform import AffineTransform
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import Normalizer
 import cv2
 
 # Matplotlib for Displaying Plots
@@ -32,12 +30,16 @@ import numpy as np
 
 # Pickle for Caching, Storing and Retrieving Data
 import pickle
+import time
+from datetime import datetime
+import warnings
 
 # Import Shuffling function from SKLEARN
 from sklearn.utils import shuffle
 
 # Pandas For Data Visualization, TQDM for Progress Bar
 import pandas as pd
+from  tqdm import tqdm
 from tqdm import trange
 from IPython.display import display, HTML
 
@@ -79,14 +81,8 @@ def load_data(file):
 
 # In[5]:
 
-def visualize_dataset(X_input, y_input, nr, nc):
-
-    # Sort Images based on labels to batch the labels according to uniform size
-    sorter = np.argsort(y_input)
-    # Sort Dataset
-    X_input = X_input[sorter]
+def populate_dataframe(X_input,y_input, file_name):
     n_classes, counts = np.unique(y_input, return_counts=True)
-
     # TODO: Number of training examples
     n_train = len(X_input)
     # TODO: What's the shape of an traffic sign image?
@@ -147,42 +143,159 @@ def visualize_dataset(X_input, y_input, nr, nc):
         else:
             df_cf[i] = "no"
     df['CrossFlippable'] = df_cf
+    df.to_csv(file_name, sep='\t', encoding='utf-8')
+    return df
+
+def visualize_dataset(X_input, y_input, nr=1, nc=10, view_histogram=False, show_images=True, show_all_classes=False):
+     # Sort Images based on labels to batch the labels according to uniform size
+    sorter = np.argsort(y_input)
+    # Sort Dataset
+    y_input = y_input[sorter]
+    X_input = X_input[sorter]
+    
+    # TODO: Number of training examples
+    n_train = len(X_input)
+    # TODO: What's the shape of an traffic sign image?
+    image_shape = X_input[0].shape
+    df= populate_dataframe(X_input,y_input,'report_card.csv')
+    
+    if view_histogram:
+        display(df)
+        plt.rcParams['figure.figsize'] = (16, 6)
+        plt.grid()
+        plt.xlabel("Class -ID")
+        plt.ylabel("Number of Images")
+        plt.title("Data Histogram")
+        plt.bar(df['ClassId'], df['Counts'])
+        plt.xticks(df['ClassId'],df['SignName'])
+        plt.xticks(rotation=90)
+        plt.show()
 
     ############ Display Section #################
     print("Number of training examples =", n_train)
     print("Image data shape =", image_shape)
-    print("Number of classes =", len(n_classes))
+    print("Number of classes =", len(df['ClassId']))
     print("Image Datatype=", X_input.dtype)
-    plt.rcParams['figure.figsize'] = (16, 6)
-    display(df)
+            
+    if show_images:
+        if show_all_classes:
+            offset=0
+            for i in df['ClassId']:
+                BATCH_SIZE=df.iloc[i,2]-1
+                X_ = X_input[offset:offset+BATCH_SIZE]
+                print('Class Number:%s Sign Name:%s Number of Samples:%s'%(df['ClassId'][i],df['SignName'][i],df['Counts'][i]))
+                images_show(X_,nr,nc,rand=False)
+                offset+= BATCH_SIZE+1
+        else:
+            images_show(X_input, nr, nc, rand=True)
+        
+
+def summarize_histogram(train,test,valid):
+    
+    X_train,y_train=load_data(train)
+    X_valid,y_valid=load_data(valid)
+    X_test,y_test=load_data(test)
+    
+    df_train=populate_dataframe(X_train,y_train,'train_reportcard.csv')
+    df_valid=populate_dataframe(X_valid,y_valid,'valid_reportcard.csv')
+    df_test=populate_dataframe(X_test,y_test,'test_reportcard.csv')
+    
+    df_summary=pd.read_csv("signnames.csv")
+    df_summary['TrainCounts'] = df_train['Counts']
+    df_summary['ValidCounts'] = df_valid['Counts']
+    df_summary['TestCounts'] = df_test['Counts']
+    df_summary['Horizontally Flippable'] = df_train['Horizontally Flippable']
+    df_summary['Vertically Flippable'] = df_train['Vertically Flippable']
+    df_summary['Flippable Both Ways'] = df_train['Flippable Both Ways']
+    df_summary['CrossFlippable'] = df_train['CrossFlippable']
+    
+    file_name= "Summary"+ datetime.now().strftime('%Y%m%d-%H%M')
+    df_summary.to_csv(file_name, sep='\t', encoding='utf-8')
+    print("Saved File Summary as:",file_name)
+    
+    # Create the general blog and the "subplots" i.e. the bars
+    f, ax1 = plt.subplots(1, figsize=(25,20))
     plt.grid()
-    plt.xlabel("Class -ID")
-    plt.ylabel("Number of Images")
-    plt.title("Data Histogram")
-    plt.bar(n_classes, counts)
-    images_show(X_input, nr, nc, rand=True)
+    
+    # Set the bar width
+    bar_width = 0.75
 
+    # positions of the left bar-boundaries
+    bar_l = [i+1 for i in range(len(df_summary['ClassId']))]
 
+    # positions of the x-axis ticks (center of the bars as bar labels)
+    tick_pos = [i+(bar_width/2) for i in bar_l]
+
+    # Create a bar plot, in position bar_1
+    ax1.bar(bar_l,
+            # using the pre_score data
+            df_summary['TrainCounts'],
+            # set the width
+            width=bar_width,
+            # with the label pre score
+            label='Training Samples',
+            # with alpha 0.5
+            alpha=0.5,
+            # with color
+            color='#F4561D')
+
+    # Create a bar plot, in position bar_1
+    ax1.bar(bar_l,
+            # using the mid_score data
+            df_summary['TestCounts'],
+            # set the width
+            width=bar_width,
+            # with pre_score on the bottom
+            bottom=df_summary['TrainCounts'],
+            # with the label mid score
+            label='Test Samples',
+            # with alpha 0.5
+            alpha=0.5,
+            # with color
+            color='#F1911E')
+
+    # Create a bar plot, in position bar_1
+    ax1.bar(bar_l,
+            # using the post_score data
+            df_summary['ValidCounts'],
+            # set the width
+            width=bar_width,
+            # with pre_score and mid_score on the bottom
+            bottom=[i+j for i,j in zip(df_summary['TrainCounts'],df_summary['TestCounts'])],
+            # with the label post score
+            label='Validation Samples',
+            # with alpha 0.5
+            alpha=0.5,
+            # with color
+            color='#F1BD1A')
+
+    # set the x ticks with names
+    plt.xticks(tick_pos, df_summary['SignName'])
+    plt.xticks(rotation=90)
+    plt.xticks(fontsize = 12)
+    
+    # Set the label and legends
+    ax1.set_ylabel("Total Number of Images")
+    ax1.set_xlabel("Sign Names/ Classes")
+    plt.legend(loc='upper left')
+
+    # Set a buffer around the edge
+    plt.xlim([min(tick_pos)-bar_width, max(tick_pos)+bar_width])
+    plt.show()
+    
+    
+    
+    
 def images_show(X_input, nr, nc, rand=True):
     
-    # Show randomly chosen 100 images
-    if (len(X_input.shape) == 4 and (X_input.shape[3] != 3)):
-        X_disp = np.reshape(X_input, (X_input.shape[0], X_input.shape[1], -1))
-    else:
-        X_disp = X_input
-
+    X_disp = np.reshape(X_input, (X_input.shape[0], X_input.shape[1], X_input.shape[2], -1))
     if rand == True:
-        randval1 = randint(0, len(X_disp) - 1)
-    else:
-        randval1 = 0
-
-    randval2 = randval1 + (nr * nc)
-    disp_im = X_disp[randval1:randval2]
-    num_rows = nr
-    num_cols = nc
-    plt.figure(figsize=(20, 20))
-    gs = gridspec.GridSpec(num_rows, num_cols, wspace=0.1)
-    ax = [plt.subplot(gs[i]) for i in range(num_rows * num_cols)]
+        X_disp = shuffle(X_disp)
+    disp_im = X_disp[0:int(nr*nc)]
+    plt.figure(figsize=(20,20))
+    
+    gs = gridspec.GridSpec(nr, nc, wspace=0.1, hspace=0.01)
+    ax = [plt.subplot(gs[i]) for i in range(nr * nc)]
     for index, index_im in enumerate(disp_im):
         ax[index].imshow(index_im, cmap='gray')
         ax[index].axis('off')
@@ -223,6 +336,12 @@ def images_show(X_input, nr, nc, rand=True):
 
 ########## Extend Dataset by Flipping and Rotation  ###########
 def flip_extend(X, y):
+    # Sort Images based on labels to batch the labels according to uniform size
+    sorter = np.argsort(y)
+    # Sort Dataset
+    y = y[sorter]
+    X = X[sorter]
+    
     # Classes of signs that, when flipped horizontally, should still be
     # classified as the same class
     self_flippable_horizontally = np.array(
@@ -288,31 +407,21 @@ def flip_extend(X, y):
 
     return (X_extended, y_extended)
 
-####### Image Normalizer for exposure based histogram equalization #######
+####### Image Normalizer for exposure based on CLAHE- Adaptive histogram equalization #######
 
 
-def image_normalizer(X):
-
-    norm = np.zeros(
-        (X.shape[0], X.shape[1], X.shape[2], X.shape[3]), np.float32)
-    norm_rgb = np.zeros(
-        (X.shape[0], X.shape[1], X.shape[2], X.shape[3]), np.uint8)
-    X = X * 255.0
-
-    rgb = [123.68, 116.779, 103.939]
-
-    for i in range(X.shape[0]):
-        r = X[i, :, :, 0]
-        g = X[i, :, :, 1]
-        b = X[i, :, :, 2]
-
-        norm[i, :, :, 0] = (r - rgb[0])
-        norm[i, :, :, 1] = (g - rgb[1])
-        norm[i, :, :, 2] = (b - rgb[2])
-        
-    return norm
+################ Adaptive Histogram equalization ############
+def ahisteq(X):
+    X_=[]
+    for k in trange(X.shape[0]):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            X_rgb=exposure.equalize_adapthist(X[k],clip_limit=0.03)
+            X_.append(X_rgb)
+    return (np.asarray(X_)).astype(np.float32)
 
 
+                  
 # ### Data Augmentation and Perturbation Functions ##
 
 # In[44]:
@@ -375,21 +484,7 @@ def gaussian(X, intensity=0.75, depth=1):
         X_.append(filters.gaussian(X[k], sigma=sigma_, multichannel=True))
     return np.asarray(X_)
 
-    
-################ Adaptive Histogram equalization ############
-def ahisteq(X, intensity=0.75, depth=1):
-    indices_ahisteq = np.random.choice(
-        X.shape[0], math.ceil(X.shape[0] * depth), replace=False)
 
-    X_=[]
-    for k in indices_ahisteq:
-        X_rgb=X[k]
-        X_rgb[:,:,0] = exposure.equalize_hist(X_rgb[:, :, 0])
-        X_rgb[:,:,1] = exposure.equalize_hist(X_rgb[:, :, 1])
-        X_rgb[:,:,2] = exposure.equalize_hist(X_rgb[:, :, 2])
-        X_.append(X_rgb)
-    
-    return np.asarray(X_)
     
 ################# Histogram Equalization ######################
 def histeq(X, intensity=0.75, depth=1):
@@ -505,9 +600,6 @@ def Augment_Images(X, Y, intensity_factor, same_size=False):
         X_h = histeq(X, intensity_factor, depth_)
         Y_h = inc(Y, depth_)
 
-        X_ah = ahisteq(X, intensity_factor, depth_)
-        Y_ah = inc(Y, depth_)
-
         ############ Rotations ######################
         X_r = img_rotate(X, intensity_factor, depth_)
         Y_r = inc(Y, depth_)
@@ -537,9 +629,9 @@ def Augment_Images(X, Y, intensity_factor, same_size=False):
 
         ############## Concatenate all results ###################
         X_ = np.concatenate(
-            (X_a, X_h, X_ah, X_p, X_r, X_z, X_i, X_seq), axis=0)
+            (X_a, X_h, X_p, X_r, X_z, X_i, X_seq), axis=0)
         Y_ = np.concatenate(
-            (Y_a, Y_h, Y_ah, Y_p, Y_r, Y_z, Y_i, Y_seq), axis=0)
+            (Y_a, Y_h, Y_p, Y_r, Y_z, Y_i, Y_seq), axis=0)
 
     else:
         ############# Sequentially apply all ##############
@@ -549,7 +641,6 @@ def Augment_Images(X, Y, intensity_factor, same_size=False):
         X_seq = zoom(X_seq)
         X_seq = apply_projection_transform(X_seq)
         X_seq = gaussian(X_seq)
-        X_seq = ahisteq(X_seq)
         Y_seq = inc(Y, 1)
         X_ = X_seq
         Y_ = Y_seq
@@ -596,7 +687,6 @@ def batch_iterator(X, Y, sample_size, intensity_factor, balance_dataset):
 
     for i in trange(len(n_classes)):
         BATCH_SIZE = counts[i] - 1
-        print("Augmenting Data for Class Number:",n_classes[i])
         # Augmentation factor is currently scaled based on
         # number of samples required to match the class with max samples.
         aug_fac = (math.ceil(sample_size / BATCH_SIZE)) - 1
@@ -618,26 +708,44 @@ def batch_iterator(X, Y, sample_size, intensity_factor, balance_dataset):
     return X, Y
 
 
+
+
+def preprocess_data(source, target, is_scale=True, is_extend=False, is_augment=False, sample_size=1000, intensity_factor=0.5, is_balance=True):
+    
+    X_,Y_= load_data(source)  
+    ########### Scale the dataset by default ########
+    if is_scale:
+        X_,Y_ = scale_dataset(X_,Y_)
+        visualize_dataset(X_, Y_, nr=1, nc=10, view_histogram=False, show_images=True, show_all_classes=True)
+    if is_extend:
+        X_,Y_ = extend_dataset(X_,Y_)
+        visualize_dataset(X_, Y_, nr=1, nc=10, view_histogram=True, show_images=False, show_all_classes=False)
+       
+    if is_augment:
+        X_,Y_ = augment_data(X_, Y_, sample_size, intensity_factor, is_balance)
+        visualize_dataset(X_, Y_, nr=10, nc=10, view_histogram=True, show_images=True, show_all_classes=False)
+        
+    cache_data(X_,Y_, target)
+    print("pre-processing complete. The file is",target)
+         
 # #### Scale Dataset and Extend Dataset
 
 # In[46]:
 
-def scale_dataset(X,Y ,visualize=True, showimages=False):
-    X_ = (X / 255.-.999).astype(np.float32)
-    if visualize:
-        visualize_dataset(X_, Y, 10, 10)
-    elif showimages:
-        images_show(X_,Y, 10, 10)
+def scale_dataset(X,Y):
+    print("Scaling dataset and normalizing it using CLAHE")
+    X_ = ahisteq(X)
+    Y_=Y
+    # X=(X/255.).astype(np.float32)
+    # X_ = np.append(X, X_, axis=0)
+    # Y_ = np.append(Y, Y_, axis=0)
+    print("Scaling Complete")
+    return X_,Y_
 
-    return X_,Y
-
-def extend_dataset(X,Y,visualize=True, showimages=False):
+def extend_dataset(X,Y):
+    print("Extending Dataset")
     X_, Y_ = flip_extend(X,Y)
-    if visualize:
-        visualize_dataset(X_, Y_, 10, 10)
-    elif showimages:
-        images_show(X_,Y_)
-        
+    print("Dataset Extended based on Flipping, Mirroring 0-180 Degrees")
     return X_,Y_
 
 
@@ -647,8 +755,8 @@ def extend_dataset(X,Y,visualize=True, showimages=False):
 
 # In[7]:
 
-def augment_data(X, Y, sample_size, intensity_factor, is_balance, visualize=True, showimages=False):
-    
+def augment_data(X, Y, sample_size, intensity_factor, is_balance):
+    print("Data Augmentation Started")
     sorter = np.argsort(Y)
     # Sort Dataset
     Y = Y[sorter]
@@ -675,13 +783,8 @@ def augment_data(X, Y, sample_size, intensity_factor, is_balance, visualize=True
     # Randomly Display 100 images in a given class to
     # see the output of augmentation
     print("New Dataset Size:", len(X_))
-    X_, Y_ = shuffle(X_, Y_)
-    if visualize:
-        visualize_dataset(X_, Y_, 10, 10)
-    elif showimages:
-        images_show(X_,Y_)
-        
-    return X_, Y_
+    print("Data Augmentation Complete")
+    return X_.astype(np.float32), Y_
 
 
 # In[11]:
@@ -727,27 +830,3 @@ def cache_data(X,Y, file):
         print("Data Saved in :",file)
         print('pickle file saved as 3 parts for data')      
 
-
-# In[ ]:
-
-def preprocess_data(source, target, is_scale=True, is_extend=False, is_augment=False, sample_size=1000, intensity_factor=0.5, is_balance=True):
-    
-    X_,Y_= load_data(source)  
-    ########### Scale the dataset by default ########
-    if is_scale:
-        print("Scaling Start")
-        print("Scaling all features between -1 and 1")
-        X_,Y_ = scale_dataset(X_,Y_,visualize=False,showimages=False)
-        print("Scaling Complete")
-    if is_extend:
-        print("Extending Dataset")
-        X_,Y_ = extend_dataset(X_,Y_,visualize=False,showimages=False)
-        print("Dataset Extended based on Flipping, Mirroring 0-180 Degrees")
-    if is_augment:
-        print("Data Augmentation Started")
-        X_,Y_ = augment_data(X_, Y_, sample_size, intensity_factor, is_balance, visualize=True, showimages=False)
-    else:
-        visualize_dataset(X_,Y_,10,10)
-        
-    cache_data(X_,Y_, target)
-         
