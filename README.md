@@ -43,6 +43,16 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
   2. Locally centering the image around the mean
   3. Normalizing using Standard Deviation
   4. Use Histogram Equalization
+  
+* Training Data needs to be Scaled and Normalized , Extended , Also Augmented , Balanced 
+* It is sufficient to scale and normalize the validation & test data
+
+### Scaling and Normalization ####
+* CLAHE ( Contrast Limited Adaptive Histogram Equalization )  for normalizing the image dataset as per recommendations from reviewer. It is observed that the CLAHE normalization itself scales the image so there is no need to scale the image separately
+
+### Types of augmentation techniques & rationale
+* We want our network to be invariant to scale , rotations, color and lighting conditions . Hence 
+* Zoom, Rotation , Shear , Brightness Distrubance , Gaussian noise , color inversion etc.
 
 # Augment Data
 * Use batch iteration to process data.
