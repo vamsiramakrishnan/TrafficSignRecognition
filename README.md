@@ -74,12 +74,20 @@ The model architecture is very similar to most classification deep learning nets
 **Localization Modules ** -> **Spatial Transformer Module** -> **CNN** -> ** Linear Classifier**
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
+<p align="center">
+  <img src="Model_Graph.png" width="1500"/>
+</p>
+
 * VGG Net Blocks that perform convolutions 
 * Each VGGNet block has two 2D Convolutions and a subsampling layer ( Max Pooling )
 * We use 4 layers of VGG Net to increase depth from 32 to 128 
 * We use Multi-scale convolutions and concatenate them with the VGG blocks using subsampling before we connect them to the fully connected layer
 
 # Model Training
+<p align="center">
+  <img src="Confusion_Matrix.png" width="1500"/>
+</p>
+
 * Use of complete augmented dataset where each image is perturbed 10 times using augmentation techniques with an intensity factor and minimum sample target over 30 epochs. 
 * The hyperparameters are fixed using search epochs for a simpler dataset and 2 classes. 
 * The learning rate schedule is implemented as follows -> Learning Rate = Learning Rate/2 when validation accuracy decreases or becomes noisy. 
