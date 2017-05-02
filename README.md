@@ -75,7 +75,7 @@ The model architecture is very similar to most classification deep learning nets
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
 <p align="center">
-  <img src="Model_Graph.png" width="1500"/>
+  <img src="Model_Graph.png" width="2000"/>
 </p>
 
 * VGG Net Blocks that perform convolutions 
@@ -84,15 +84,15 @@ The model architecture is very similar to most classification deep learning nets
 * We use Multi-scale convolutions and concatenate them with the VGG blocks using subsampling before we connect them to the fully connected layer
 
 # Model Training
-<p align="center">
-  <img src="Confusion_Matrix.png" width="1500"/>
-</p>
-
 * Use of complete augmented dataset where each image is perturbed 10 times using augmentation techniques with an intensity factor and minimum sample target over 30 epochs. 
 * The hyperparameters are fixed using search epochs for a simpler dataset and 2 classes. 
 * The learning rate schedule is implemented as follows -> Learning Rate = Learning Rate/2 when validation accuracy decreases or becomes noisy. 
 * After achieving 95 % validation accuracy we use a balanced dataset to train the model for 20 epochs with higher dropout rate and low learning rate
 * The final accuracy on the test set after training the model for 60 epochs is 98.7 % 
+<p align="center">
+  <img src="Confusion_Matrix.png" width="1500"/>
+</p>
+
 * We use the confusion matrix to further understand where the model goes wrong and train the model exclusively with that class with a lot of samples. 
 
 # Model Testing 
