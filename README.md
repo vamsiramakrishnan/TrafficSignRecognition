@@ -88,7 +88,9 @@ The model architecture is very similar to most classification deep learning nets
 * We use the confusion matrix to further understand where the model goes wrong and train the model exclusively with that class with a lot of samples. 
 
 # Model Testing 
-
+<p align="center">
+  <img src="Capture_Images.png" width="1500"/>
+</p>
 * The model is tested with a variety of images after the test set is evaluated. A brief summary on this is elaborated as follows.
 * **Types of Images**
   * The signs set consist of a few kinds of challenges for the classifier
