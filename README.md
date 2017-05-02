@@ -75,7 +75,7 @@ The model architecture is very similar to most classification deep learning nets
 **VGG1** -> **VGG2** -> **VGG3** -> **VGG4** -> **CONCAT - VGG1_VGG2_VGG3_VGG4** -> **FC1** -> **FC2** -> **Logits**
 
 <p align="center">
-  <img src="Model_Graph.png" width="2000"/>
+  <img src=" 	Model_graph.png" width="2000"/>
 </p>
 
 * VGG Net Blocks that perform convolutions 
