@@ -84,7 +84,8 @@ The model architecture is very similar to most classification deep learning nets
 * The hyperparameters are fixed using search epochs for a simpler dataset and 2 classes. 
 * The learning rate schedule is implemented as follows -> Learning Rate = Learning Rate/2 when validation accuracy decreases or becomes noisy. 
 * After achieving 95 % validation accuracy we use a balanced dataset to train the model for 20 epochs with higher dropout rate and low learning rate
-* The final accuracy on the test set is 98.7 % 
+* The final accuracy on the test set after training the model for 60 epochs is 98.7 % 
+* We use the confusion matrix to further understand where the model goes wrong and train the model exclusively with that class with a lot of samples. 
 
 # Model Testing 
 * The model is tested with a variety of images after the test set is evaluated. A brief summary on this is elaborated as follows.
@@ -92,14 +93,24 @@ The model architecture is very similar to most classification deep learning nets
   * The signs set consist of a few kinds of challenges for the classifier
     Color changed Turn Left ahead
   * **Multi Sign**
-        No vehicles ahead with a sign that has some writing below but the writing isn't a part of the 43 classes
-    Elderly Crossing sign that looks similar to Children crossing but is not in the GTSRB
-    A Slightly Rotated General Caution Sign
-    A Slippery Road and Snow Caution Sign in the same picture
-    A simple Children Crossing Sign etc.
+    * No vehicles ahead with a sign that has some writing below but the writing isn't a part of the 43 classes
+    * Elderly Crossing sign that looks similar to Children crossing but is not in the GTSRB
+    * A Slightly Rotated General Caution Sign
+    * A Slippery Road and Snow Caution Sign in the same picture
+    * A simple Children Crossing Sign etc.
 
-    The Softmax probabilities are normalized . I.e The logistic regression output from the classifier is activated with a softmax function that ouputs a set of probabilities. These are normalized and plotted (0-1)
+* The Softmax probabilities are normalized . I.e The logistic regression output from the classifier is activated with a softmax function that ouputs a set of probabilities. These are normalized and plotted (0-1)
+* The top 5 guesses are plotted in the neighbouring bar chart and it is for readability and is not normalized.
 
-    The top 5 guesses are plotted in the neighbouring bar chart and it is for readability and is not normalized.
+# Observations
+* **Key Strengths**
+  * Since the challenge to classify image is not so high our model even predicts the images that are not a part of the GTSRB quite intuitively . For Example - Elderly Crossing Looks a lot like children's crossing and the model does a good job predicting it.
+  * Color invariance is quite well established , the prediction of turn left ahead works well.
+  
+* **Areas of improvement**
+* For images that aren't 32x32x3 the resize method's order determines how accurate the prediction is . ( Cubic Spline, BiLinear, etc.) 
+* The resize method has the tendency to destroy the aspect ratios in the image that causes deterioration in the performance of the model.
+
+
 
 
