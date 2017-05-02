@@ -22,6 +22,9 @@ https://github.com/vamsiramakrishnan/TrafficSignRecognition.git
 * To clean up the code and make it re-usable, part of the code was exported to a python file called PreProcessing.py which is used by the final version of the file to call functions. 
 * There are deviations in the way the project has been designed and the questions answered. 
 
+# Note # 
+* Please use the .html version of the Traffic Sign Classifier to see the Confusion Matrix and Softmax Probability Plots properly 
+
 # Some highlights 
 * 98.5% accuracy over the test set 
 * Learning rate annealing, Dropout increment, batch size increase as accuracy increases
@@ -81,4 +84,22 @@ The model architecture is very similar to most classification deep learning nets
 * The hyperparameters are fixed using search epochs for a simpler dataset and 2 classes. 
 * The learning rate schedule is implemented as follows -> Learning Rate = Learning Rate/2 when validation accuracy decreases or becomes noisy. 
 * After achieving 95 % validation accuracy we use a balanced dataset to train the model for 20 epochs with higher dropout rate and low learning rate
+* The final accuracy on the test set is 98.7 % 
+
+# Model Testing 
+* The model is tested with a variety of images after the test set is evaluated. A brief summary on this is elaborated as follows.
+* **Types of Images**
+  * The signs set consist of a few kinds of challenges for the classifier
+    Color changed Turn Left ahead
+  * **Multi Sign**
+        No vehicles ahead with a sign that has some writing below but the writing isn't a part of the 43 classes
+    Elderly Crossing sign that looks similar to Children crossing but is not in the GTSRB
+    A Slightly Rotated General Caution Sign
+    A Slippery Road and Snow Caution Sign in the same picture
+    A simple Children Crossing Sign etc.
+
+    The Softmax probabilities are normalized . I.e The logistic regression output from the classifier is activated with a softmax function that ouputs a set of probabilities. These are normalized and plotted (0-1)
+
+    The top 5 guesses are plotted in the neighbouring bar chart and it is for readability and is not normalized.
+
 
