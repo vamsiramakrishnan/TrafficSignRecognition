@@ -108,8 +108,8 @@ The model architecture is very similar to most classification deep learning nets
   * Color invariance is quite well established , the prediction of turn left ahead works well.
   
 * **Areas of improvement**
-* For images that aren't 32x32x3 the resize method's order determines how accurate the prediction is . ( Cubic Spline, BiLinear, etc.) 
-* The resize method has the tendency to destroy the aspect ratios in the image that causes deterioration in the performance of the model.
+  * For images that aren't 32x32x3 the resize method's order determines how accurate the prediction is . ( Cubic Spline, BiLinear, etc.) 
+  * The resize method has the tendency to destroy the aspect ratios in the image that causes deterioration in the performance of the model.
 
 
 
